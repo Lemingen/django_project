@@ -1,0 +1,21 @@
+<h2>Ваши документы</h2>
+{% load static %}
+{% get_media_prefix as MEDIA_URL %}
+
+<form method="POST">
+    {% csrf_token %}
+    <div class="gallery">
+        {% for doc in docs %}
+            <div class="doc">
+                <img src="{{ MEDIA_URL }}{{ doc.file_path }}" alt="Документ {{ doc.id }}">
+                <p>ID: {{ doc.id }} | Размер: {{ doc.size }} Кб</p>
+                <label>
+                    <input type="checkbox" name="doc_ids" value="{{ doc.id }}">
+                    Выбрать для анализа
+                </label>
+            </div>
+        {% endfor %}
+    </div>
+    <br>
+    <button type="submit" style="margin-top: 20px;">Заказать анализ выбранных</button>
+</form>

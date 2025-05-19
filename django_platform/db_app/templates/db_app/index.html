@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Документы</title>
+    <style>
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .doc {
+            text-align: center;
+        }
+        img {
+            width: 100%;
+            height: auto;
+            max-height: 200px;
+        }
+        .top-buttons {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    {% if user.is_authenticated %}
+        <p>Вы вошли как <strong>{{ user.username }}</strong></p>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Выйти</button>
+        </form>
+
+        <div class="top-buttons">
+            <a href="{% url 'upload_file' %}"><button>Добавить картинку</button></a>
+            <a href="{% url 'order_analysis' %}"><button>Проанализировать картинку</button></a>
+        </div>
+
+        {% load static %}
+        {% get_media_prefix as MEDIA_URL %}
+
+        <div class="gallery">
+            {% for doc in docs %}
+                <div class="doc">
+                    <img src="{{ MEDIA_URL }}{{ doc.file_path }}" alt="Документ {{ doc.id }}">
+                    <p>ID: {{ doc.id }}</p>
+                    {% if doc.extracted_text %}
+                    <p><strong>Распознанный текст:</strong> {{ doc.extracted_text }}</p>
+    {% else %}
+        <p><em>Текст не получен</em></p>
+    {% endif %}
+</div>
+
+            {% empty %}
+                <p>Нет загруженных документов.</p>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <p>Вы не вошли в систему. <a href="{% url 'login' %}">Войти</a></p>
+    {% endif %}
+
+</body>
+</html>
